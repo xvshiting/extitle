@@ -1,0 +1,40 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+import sys
+import re
+import string
+import chardet
+import os
+def extract(files):
+	with open (files, 'rb') as f:
+		contents=f.read()
+	# print (chardet.detect(contents))
+	contents=contents.decode("UTF-16LE")
+	cc=contents.split('\n')
+	re_ci=re.compile(r'^Dialogue.*0,,(.*)\\N{.*&}(.*)?')
+	result=[]
+	for line in cc:
+		ci=re_ci.match(line)
+		if ci :
+			result.append(str(ci.group(1))+"   "+str(ci.group(2)))
+	filename=files.split(os.sep)[-1]+".txt"
+	file_dir='extract_result/'
+	if not os.path.exists(file_dir):
+		print("do not have that dir make.....")
+		os.makedirs(file_dir)
+	print(file_dir+filename+'\n')
+	with open(file_dir+filename,'w+') as f:
+		for i in result:
+			f.write(i)
+			f.write('\n')
+
+	
+	# print(ci.group(1),ci.group(2))
+
+
+
+if __name__ == '__main__':
+	args=sys.argv
+	if len(args)==1:
+		print('Need one param,try again!')
+	extract(args[1])
